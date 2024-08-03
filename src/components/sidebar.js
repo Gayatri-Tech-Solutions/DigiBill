@@ -34,19 +34,26 @@ const Sidebar = () => {
             className={`sidebar-item ${activePage === "/dashboard" ? "active" : ""}`}
             onClick={() => showPage("/dashboard")}
           >
-            Dashboard
+            <strong>Dashboard</strong>
           </div>
           <div
-            className={`sidebar-item ${activePage === "/bills" ? "active" : ""}`}
+            className={`sidebar-item ${activePage === "/bills" || activePage === "/create-bill" ? "active" : ""}`}
             onClick={() => showPage("/bills")}
           >
-            Bills
+            <strong>Bills</strong>
           </div>
           <div
             className={`sidebar-item ${activePage === "/customers" ? "active" : ""}`}
             onClick={() => showPage("/customers")}
           >
-            Customers
+            <strong>Customers</strong>
+          </div>
+
+          <div
+            className={`sidebar-item ${activePage === "/ledger" ? "active" : ""}`}
+            onClick={() => showPage("/ledger")}
+          >
+            <strong>Ledger</strong>
           </div>
         </div>
     </>

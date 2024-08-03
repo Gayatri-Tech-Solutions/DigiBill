@@ -8,7 +8,7 @@ import { userData} from "../store/slice/userSlice";
 import image from "../Assets/login.jpg";
 
 const LoginPage = ({ setLoggedin }) => {
-  const [email, setEmail] = useState("rudraptap");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [showAlert, setShowAlert] = useState(false);//variable name , function to set variable value
@@ -16,15 +16,13 @@ const LoginPage = ({ setLoggedin }) => {
   const getUserDetails = async() =>{
     const token = localStorage.getItem('token')
     if(token){
-      console.log("token exist")
       try{
         let {data} = await axios.get(`${apiURL}/api/user/user-details`,{
           headers : {
             Authorization : `Bearer ${token}`
           }
         }) 
-        console.log("API CALLED")
-        console.log(data.data)
+        
         // localStorage.setItem("token", data.data.token);
       dispatch(userData(data.data));
       navigate('/dashboard');
@@ -35,7 +33,10 @@ const LoginPage = ({ setLoggedin }) => {
   }
 
   useEffect(()=>{
-    getUserDetails()
+    const fetchData = async () => {
+      await getUserDetails();
+    };
+    fetchData();
   },[])
 
 
@@ -47,8 +48,7 @@ const LoginPage = ({ setLoggedin }) => {
     try {
       const bodyData = { email, password };
       const { data } = await axios.post(`${apiURL}/api/user/login`, bodyData);
-      console.log("data")
-      console.log(data.data)
+      
 
       localStorage.setItem("token", data.data.token);
       

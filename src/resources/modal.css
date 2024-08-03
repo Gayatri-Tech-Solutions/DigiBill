@@ -1,0 +1,31 @@
+
+
+.stdropdown-input{
+ /* width : "80%"; */
+ display: flex;
+ justify-content: space-between;
+ margin-right: 35px;
+}
+
+
+
+.css-1t1j96h-MuiPaper-root-MuiDialog-paper {
+ width: 80%;
+}
+
+.input{
+ margin-right: 35px !important;
+ border-radius: 5px ;
+ border: none;
+ background-color:  rgb(233, 236, 239); 
+ width: -webkit-fill-available;
+ border-radius: 5px 0px 0px 5px;
+}
+
+
+.stsearch-box input {
+ border: none;
+ background-color:  rgb(233, 236, 239); 
+ width: -webkit-fill-available;
+ border-radius: 5px 0px 0px 5px;
+}

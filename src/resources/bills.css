@@ -1,0 +1,37 @@
+.filters-select ,.filters-date{
+ height: 29.5px;
+ padding-top: 1;
+ border: 2;
+ width: 175px;
+ 
+}
+.filters-select:focus{
+ border: 2px solid black;
+ border-radius: 3px;
+}
+
+.apply-filter-button{
+ border: 0;
+ font-size: medium;
+ font-style: italic;
+ color :rgb(127,74,196);
+}
+
+.apply-filter-button:hover{
+ font-weight: bold;
+}
+
+.filters-label{
+ font-style:italic;
+}
+
+.MuiCircularProgress-root{
+ width: 20px !important;
+ height: 20px !important;
+}
+
+.main-loader .MuiCircularProgress-root{
+ width: 40px !important;
+ height: 40px !important;
+}
+

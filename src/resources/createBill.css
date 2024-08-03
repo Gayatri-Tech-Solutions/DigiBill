@@ -1,0 +1,41 @@
+.main-block{
+ width: 100%;
+ padding: 10px;
+}
+.sub-block{
+ border: 2px solid black;
+ padding: 10px 20px;
+}
+
+.bill-heading,.detail-block,.receiver-detail-block,.bill-item-block , .total-block{
+  padding-bottom: 5px;
+  border-bottom: 3px solid black;
+}
+
+.vl {
+ margin-top: 5px;
+ margin-right: 5px;
+ border-left: 2px solid black;
+}
+
+
+.bill-item-block{
+ padding: 5px;
+  border-bottom: 3px solid black;
+}
+
+.invoice-summary h3 {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+.submit-button{
+  background-color: rgb(127,74,196);
+ color: white;
+ 
+}
+
+.sas-input{
+  width: 112px;
+  border: 0;
+}

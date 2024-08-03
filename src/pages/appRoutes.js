@@ -5,6 +5,9 @@ import Header from "../components/header";
 import Dashboard from "./dashboard";
 import Customers from "./customers";
 import Bills from "./bills";
+import CreateBill from "./createBill";
+import Ledger from "./ledger";
+
 const AppRoutes = () => {
   return (
     <div className="w-100">
@@ -23,11 +26,11 @@ const AppRoutes = () => {
             <Routes>
               <Route exact path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              
               <Route path="/customers" element={<Customers />}/>
+              <Route path="/create-bill" element={< CreateBill/>}/>
               <Route path="/bills" element={< Bills/>}/>
-              
-              {/* <Route path="*" element={<Navigate to={`/dashboard`} />} /> */}
+              <Route path="/ledger" element={< Ledger/>}/>
+              <Route path="*" element={<Navigate to={`/dashboard`} />} />
               {/* <Route path="/reopen" element={<ReopenTicket />} /> */}
               {/* <Route path="/correspondence" element={<Correspondence />} /> */}
             </Routes>

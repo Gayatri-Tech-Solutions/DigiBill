@@ -12,6 +12,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
 import { apiURL } from "../env";
+import logo from '../Assets/logo.png'
 
 const Header = ({ sideBar, setSideBar }) => {
   const adminData = localStorage.getItem("token");
@@ -79,20 +80,20 @@ const Header = ({ sideBar, setSideBar }) => {
       };
 
       try {
-        console.log(apiData);
         let { data } = await axios.post(
-          `${apiURL}/api/admin/reset/password`,
+          `${apiURL}/api/user/reset-password`,
           apiData,
-          {
-            headers,
-          }
         );
-        console.log({ data }, "SENDING REQUEST");
         setPassword("");
         setNewPassword("");
         setConfirmPassword("");
         setShowAlert(true);
-        setAlert("Password has been Changed");
+        console.log(data)
+        if(data.status == true ){
+          setAlert("Password has been Changed");
+        }else{
+          setAlert(data.data)
+        }
         setTimeout(() => {
           setShowAlert(false);
           setAlert("");
@@ -124,37 +125,29 @@ const Header = ({ sideBar, setSideBar }) => {
   const userDetails = useSelector((state) => state.user.userData);
 
   useEffect(() => {
-    setUserName(userDetails.name);
-    setEmail(userDetails.email);
+    setUserName(userDetails?.name);
+    setEmail(userDetails?.email);
   }, [adminData]);
 
   return (
     <>
       <div className="w-100 d-flex flex-column justify-content-around ">
         {showAlert ? (
-          alert == "Password does not match" ? (
-            <div
-              class="alert alert-danger z-5 justify-content-around "
-              role="alert"
-            >
-              Password does not match
-            </div>
-          ) : (
             <div
               class="alert alert-success z-5 justify-content-center "
               role="alert"
             >
-              Password has been Changed
+              {alert}
             </div>
           )
-        ) : (
+         : 
           <></>
-        )}
+        }
       </div>
-      <div className="position-fixed d-flex w-100 bg-white header-main justify-content-center  ">
+      <div className=" position-absolute d-flex w-100 bg-white header-main justify-content-center  ">
         <div>{/* sidenav button here  */}</div>
         <div>
-          <SimLogo />
+          <img src={logo} alt="Logo" width={200} />
         </div>
         <div className="w-100 d-flex align-items-center">
           {/* <div className="search-container">
@@ -174,7 +167,7 @@ const Header = ({ sideBar, setSideBar }) => {
             </div>
             <div className="user-details">
               <div className="user-name">{userName}</div>
-              <div className="user-role">Development Intern</div>
+              <div className="user-role">Jay Logistic Services</div>
             </div>
             <div className="dropdown">
               <div onClick={() => toggleDropdown()}>
@@ -309,8 +302,7 @@ const Header = ({ sideBar, setSideBar }) => {
           <DialogTitle id="alert-dialog-title"></DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              Let Google help apps determine location. This means sending
-              anonymous location data to Google, even when no apps are running.
+              Are you sure you want to logout?
             </DialogContentText>
           </DialogContent>
           <DialogActions>

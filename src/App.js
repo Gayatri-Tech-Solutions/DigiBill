@@ -1,4 +1,4 @@
-import {BrowserRouter as Router , Route , Routes, useSearchParams} from "react-router-dom"
+import {BrowserRouter as Router , Route , Routes, useSearchParams , Navigate} from "react-router-dom"
 import { useState } from "react";
 import './App.css';
 import AppRoutes from "./pages/appRoutes";
@@ -10,7 +10,6 @@ import { useSelector } from "react-redux";
 function App() {
   // const [loggedIn , setLoggedIn] = useState(false)
   const loggedIn = useSelector(state=>state.user.loggedIn)
-  console.log(loggedIn)
 
   const token = localStorage.getItem("token")
   
@@ -23,8 +22,8 @@ function App() {
         <AppRoutes/> 
         :
         <Routes>
-          <Route path="/login" element={<LoginPage/>} />
-          <Route path="*" element={<LoginPage/>} />
+          <Route  path="/login" element={<LoginPage/>} />
+          <Route  path="*" element={<Navigate to='/login' />} />
           <Route path="/register" element={<Register/>} />
           <Route path="/forgetPassword" element={<ForgetPassword/>} />
         </Routes>

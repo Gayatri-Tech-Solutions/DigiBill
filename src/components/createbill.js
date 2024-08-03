@@ -4,11 +4,10 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import AppNavbar from "./navbar";
 import { Link, useLocation } from "react-router-dom";
 
 const Createbill = () => {
- const [open, setOpen] = useState(false);
+ const [open, setOpen] = useState(true);
  const [firmName, setFirmName] = useState("");
  const [firmAdd, setFirmAdd] = useState("");
  const [gstNo, setGstNo] = useState("");
@@ -20,9 +19,8 @@ const Createbill = () => {
  const [mode, setMode] = useState("");
 
  const location = useLocation();
- const data = location.state.data;
-
- console.log(data);
+ let data ={}
+ 
 
  useEffect(() => {
    if (data) {
@@ -34,7 +32,7 @@ const Createbill = () => {
        data.address[0].state +
        ", " +
        data.address[0].country;
-     console.log(address);
+     
      setFirmAdd(address);
      setFirmName(data.name);
    }
@@ -54,7 +52,6 @@ const Createbill = () => {
 
  return (
    <div className="d-flex flex-column w-100">
-     <AppNavbar />
      <div>
        <div className="d-flex justify-content-center">
          <button onClick={handleClickOpen} className="btn bg-success">

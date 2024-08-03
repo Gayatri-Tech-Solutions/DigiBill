@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 import image from "../Assets/register.jpg";
+import { Verified } from "@mui/icons-material";
 
 const Register = () => {
   // const navigate = useNavigate()
@@ -23,7 +24,8 @@ const Register = () => {
         email,
         password,
         name ,
-        phone
+        phone,
+        verified : false
       };
 
       let { data } = await axios.post(`${apiURL}/api/user/register`, bodyData);
