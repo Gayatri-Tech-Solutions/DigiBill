@@ -54,6 +54,7 @@ const CreateBill = (customer) => {
 
   useEffect(() => {
     if (customer) {
+      console.log(customer)
       const address =
         customer.address[0].houseno +
         ", " +
@@ -62,6 +63,8 @@ const CreateBill = (customer) => {
         customer.address[0].city +
         ", " +
         customer.address[0].state +
+        "-" +
+        customer.address[0].pin +
         ", " +
         customer.address[0].country;
 
@@ -157,10 +160,10 @@ const CreateBill = (customer) => {
 
       
       let { data } = await axios.post(`${apiURL}/api/invoice/generate`, apiData)
-      // if(data){
-      //   alert('Invoice Created')
-      // }
-      // navigate('/bills')
+      if(data){
+        alert('Invoice Created')
+      }
+      navigate('/bills')
     } catch (error) {
       console.log('something went wrong', error)
     }
@@ -242,12 +245,13 @@ const CreateBill = (customer) => {
           <div className='col-8'></div>
           <div className="invoice-summary col-4">
             <h3>Total<span>{amount} Rs.</span></h3>
-            {sameState ? (
-              <h3>CGST(18%)<span>{Math.ceil(amount * 0.18).toFixed(2)} Rs.</span></h3>
+            {sameState ? (<>
+              <h3>SGST(9%)<span>{Math.ceil(amount * 0.09).toFixed(2)} Rs.</span></h3>
+              <h3>CGST(9%)<span>{Math.ceil(amount * 0.09).toFixed(2)} Rs.</span></h3>
+            </>
             ) : (
               <>
-                <h3>CGST(9%)<span>{Math.ceil(amount * 0.09).toFixed(2)} Rs.</span></h3>
-                <h3>IGST(9%)<span>{Math.ceil(amount * 0.09).toFixed(2)} Rs.</span></h3>
+              <h3>IGST(18%)<span>{Math.ceil(amount * 0.18).toFixed(2)} Rs.</span></h3>
               </>
             )}
             <h3>Grand Total<span>{Math.ceil(amount * 1.18).toFixed(2)} Rs.</span></h3>
