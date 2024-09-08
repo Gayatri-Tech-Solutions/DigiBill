@@ -46,7 +46,7 @@ const Firmdetails = ({ data }) => {
       phone : phone,
       firmName : firmName,
       gst : gst,
-      stamp : otherData.firmDetails.stamp
+      stamp : otherData?.firmDetails?.stamp || ""
     }
     otherData.firmDetails = firmDetails
     console.log("otherData")
