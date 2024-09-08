@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import axios from "axios";
-import { apiURL } from "../env";
 import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
@@ -10,6 +9,7 @@ import { Verified } from "@mui/icons-material";
 
 const Register = () => {
   // const navigate = useNavigate()
+  const apiURL = process.env.REACT_APP_API_URL
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showAlert, setShowAlert] = useState(false);

@@ -3,7 +3,7 @@ import '../resources/createBill.css';
 import { FaPhoneAlt, FaHome, FaPlusCircle, FaMinusCircle } from "react-icons/fa";
 import moment from 'moment/moment';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { apiURL } from '../env';
+
 import axios from 'axios';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -11,19 +11,33 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useReactToPrint } from 'react-to-print';
+import { useSelector } from 'react-redux';
+import DatePicker from "react-datepicker";
+import html2pdf from 'html2pdf.js';
+import "react-datepicker/dist/react-datepicker.css";
+
+import sign from "../Assets/signature.png"
 
 const CreateBill = (customer) => {
+  const apiURL = process.env.REACT_APP_API_URL
+  const userData = useSelector(state => state.user.userData)
+  console.log("userData")
+  console.log(userData.address[0])
   const navigate = useNavigate()
-  const [firmName, setFirmName] = useState("JAY LOGISTICS SERVICES");
-  const [firmAdd, setFirmAdd] = useState("b-1/140,sector-3 chiranjiv vihar,ghaziabad-201001(uttar-pradesh)");
-  const [phone, setPhone] = useState("8368736207");
-  const [gst, setGst] = useState("09BNIPS8181G1ZD");
+  const token = localStorage.getItem('token')
+  const [firmName, setFirmName] = useState("");
+  const [firmAdd, setFirmAdd] = useState("");
+  const [phone, setPhone] = useState("");
+  const [gst, setGst] = useState("");
   const [amount, setAmount] = useState("0");
   const [totalAmount, setTotalAmount] = useState("0");
   const [sasCode, setSasCode] = useState("");
   const [sameState, setSameState] = useState(false)
   const [open, setOpen] = React.useState(false);
+  const [startDate, setStartDate] = useState(moment().format());
+  const [yourAddress , setYourAddress] = useState("")
   // const [includeInLedger , setIncludeInLedger] = useState(true)
+
   const [rows, setRows] = useState([
     { sno: 1, date: '', awd: '', deliveryDist: '', box: '', weight: '', rate: '', mode: '' }
   ]);
@@ -51,10 +65,24 @@ const CreateBill = (customer) => {
     customer = location?.state?.customer || null
   }
 
+  useEffect(()=>{
+    const temp =
+        userData.otherData.address.houseno +
+        ", " +
+        userData.otherData.address.locality +
+        ", " +
+        userData.otherData.address.city +
+        ", " +
+        userData.otherData.address.state +
+        "-" +
+        userData.otherData.address.pin +
+        ", " +
+        userData.otherData.address.country;
+        setYourAddress(temp)
+  },[userData])
 
   useEffect(() => {
     if (customer) {
-      console.log(customer)
       const address =
         customer.address[0].houseno +
         ", " +
@@ -70,6 +98,7 @@ const CreateBill = (customer) => {
 
       setFirmAdd(address);
       setFirmName(customer.name);
+      setSasCode(userData.otherData.firmDetails.SAScode)
       setGst(customer.gst);
       setPhone(customer.phone)
       if (customer.address[0].state === "Uttar Pradesh") {
@@ -87,7 +116,7 @@ const CreateBill = (customer) => {
       setSasCode(billData.customerData.sasCode)
       setSameState(billData.customerData.sameState)
     }
-  }, [customer]);
+  }, [customer , userData ]);
 
   const calculateTotalAmount = (rows) => {
     const total = rows.reduce((acc, row) => acc + parseFloat(row.rate || 0), 0);
@@ -155,17 +184,30 @@ const CreateBill = (customer) => {
         tax : parseInt(Math.ceil(amount * 0.18).toFixed(2)) ,
         amount: parseInt(Math.ceil(amount * 1.18).toFixed(2)),
         totalAmount : parseInt(amount),
-        updateLedger : includeInLedger
+        updateLedger : includeInLedger,
+        createdAt : startDate
       }
-
       
-      let { data } = await axios.post(`${apiURL}/api/invoice/generate`, apiData)
+      let { data } = await axios.post(`${apiURL}/api/invoice/generate`, apiData ,{
+        headers : {
+          Authorization : `Bearer ${token}`
+        },
+        params:{
+          userid : userData.id
+        }
+      })
+
       if(data){
         alert('Invoice Created')
       }
       navigate('/bills')
     } catch (error) {
       console.log('something went wrong', error)
+      if(error.response.data.message == 'Token expired'){
+        localStorage.removeItem('token')
+          alert("Token Expired! Please login Again")
+          window.location.reload();
+      }
     }
   }
 
@@ -174,17 +216,38 @@ const CreateBill = (customer) => {
     content: () => componentRef.current,
   });
 
+  const handleDownloadPdf = () =>{
+    generatePDF('main-block')
+  }
+
+  const handleDateChange = (date) => {
+    let formattedDate = moment(date).format() ;
+    setStartDate(formattedDate.slice(0,11) + "00:00:00+05:30")
+  }
+
+  const generatePDF = async (elementId) => {
+    const element = document.getElementById(elementId);
+    const opt = {
+      margin : [1.5 ,1 , 1.5 ,1],
+      filename: `${billData?.billNo}__${moment(billData.createdAt).format('DD/MM/YYYY')}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2.8},
+      jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
+    };
+    await html2pdf().set(opt).from(element).save();
+  };
+
   return (
     <div>
-    <div className='main-block'  ref={componentRef}>
+    <div className='main-block' id='main-block'  ref={componentRef}>
       <div className='sub-block'>
         <h2 className='bill-heading text-center'>Tax Invoice</h2>
 
         <div className="detail-block">
-          <h4>JAY LOGISTICS SERVICES</h4>
-          <h5 className='text-capitalize'><FaHome /> b-1/140,sector-3 chiranjiv vihar,ghaziabad-201001(uttar-pradesh)</h5>
-          <h5><FaPhoneAlt /> 8368736207</h5>
-          <h5><span className='fw-bold'>GSTIN/UIN:-</span>09BNIPS8181G1ZD</h5>
+          <h4>{(userData.otherData.firmDetails.firmName).toUpperCase()}</h4>
+          <h5 className='text-capitalize'><FaHome /> {yourAddress}</h5>
+          <h5><FaPhoneAlt />{userData.otherData.firmDetails.phone}</h5>
+          <h5><span className='fw-bold'>GSTIN/UIN:-</span>{userData.otherData.firmDetails.gst}</h5>
         </div>
 
         <div className='receiver-detail-block d-flex'>
@@ -197,8 +260,8 @@ const CreateBill = (customer) => {
           <div className='vl'></div>
           <div>
             <h5><span className='fw-bold'>Bill NO. :-</span>{billData?.billNo ? billData.billNo : " B*****"}</h5>
-            <h5><span className='fw-bold'>Bill Date :-</span>{billData?.createdAt ? moment(billData.createdAt).format('DD/MM/YYYY') : moment().format('DD/MM/YYYY')}</h5>
-            <h5><span className='fw-bold'>SAS Code :-</span>{billData?.customerData?.sasCode ? sasCode : <input type='text' value={sasCode} onChange={(e)=>setSasCode(e.target.value) } placeholder='____________' className='sas-input'/>}</h5>
+            <h5><span className='fw-bold'>Bill Date :- </span>{billData?.createdAt ? moment(billData.createdAt).format('DD/MM/YYYY') : <><DatePicker selected={startDate} onChange={(date)=>handleDateChange(date)}   dateFormat="dd/MM/YYYY" /></>}</h5>
+            <h5><span className='fw-bold'>SAS Code :- </span>{billData?.customerData?.sasCode ? sasCode : sasCode}</h5>
           </div>
         </div>
 
@@ -219,8 +282,8 @@ const CreateBill = (customer) => {
             <tbody>
               {rows.map((row, index) => (
                 <tr key={index}>
-                  <th scope="row">{row.sno}</th>
-                  <td>{moment().format('DD/MM/YYYY')}</td>
+                  <td className=' fw-bold align-content-center'>{row.sno}</td>
+                  <td className=' align-content-center'><span>{moment(startDate).format('DD/MM/YYYY')}</span></td>
                   <td><input type="text" value={row.awb} onChange={(e) => handleInputChange(index, 'awb', e.target.value)} style={inputStyle} /></td>
                   <td><input type="text" value={row.deliveryDist} onChange={(e) => handleInputChange(index, 'deliveryDist', e.target.value)} style={inputStyle} /></td>
                   <td><input type="text" value={row.box} onChange={(e) => handleInputChange(index, 'box', e.target.value)} style={inputStyle} /></td>
@@ -258,11 +321,11 @@ const CreateBill = (customer) => {
           </div>
         </div>
 
-        <div className='d-flex term-block'>
+        <div className='stampAndCondition d-flex term-block'>
           <div className='col-8'>
             <h5>Terms & Conditions...</h5>
             <ul>
-              <li><p>Please make payments via <span className='fw-bold'>cheque or NEFT</span> to <span className='fw-bold'>Jay Logistics Services, A/C NO - 0076102100000544, IFSCODE - PUNB0007610, Punjab National Bank, Razapur Ghaziabad - 201002</span></p></li>
+              <li><p>Please make payments via <span className='fw-bold'>cheque or NEFT</span> to <span className='fw-bold text-capitalize'>{userData.otherData.bankDetails.accountName.toLowerCase()}, A/C NO - {userData.otherData.bankDetails.accountNumber.toUpperCase()}, IFSCODE - {userData.otherData.bankDetails.IFSCcode.toUpperCase()}, {userData.otherData.bankDetails.bankName}, {userData.otherData.bankDetails.branch} , {userData.otherData.bankDetails.city} - {userData.otherData.bankDetails.pincode}</span></p></li>
               <li>All <span className='fw-bold'>payments are due within 30 days</span> of the invoice date. Late payments may incur additional charges.</li>
               <li>Please review the items and charges listed in this invoice carefully. <span className='fw-bold'>For any discrepancies or questions, contact us within 7 days of receipt.</span></li>
             </ul>
@@ -272,7 +335,14 @@ const CreateBill = (customer) => {
 
           <div className='col-4 d-flex flex-column justify-content-between'>
             <div>
-              <h5 className='fw-bold text-decoration-underline'>Jay Logistics Services</h5>
+              <h5 className='fw-bold text-capitalize text-decoration-underline'>{userData.otherData.firmDetails.firmName}</h5>
+            </div>
+            <div className='stamp border border-2 p-2 border-primary-subtle  align-self-center' style={{width:"-WEBKIT-FILL-AVAILABLE", margin:"0 20px 0 20px", }}>
+              <div className='text-primary text-capitalize'>For {userData.otherData.firmDetails.firmName.toLowerCase()}</div>
+              <div className='Sign d-flex justify-content-center' ><img src={sign} height={"50"} width={"150"}  /></div>
+
+              <div className=' d-flex justify-content-end text-primary'>Proprietor</div>
+
             </div>
             <div className='align-self-end'>
               Stamp & Signature
@@ -284,7 +354,7 @@ const CreateBill = (customer) => {
     </div>
       <div className='d-flex justify-content-end m-2'>
         <button className='btn btn-danger p-2 m-1 ' onClick={cancelBill}>Cancel</button>
-        <button className='submit-button p-2 m-1 rounded-2' onClick={billData ? handlePrint : handleClickOpen}>{billData ? "Print" : "Generate Invoice"}</button>
+        <button className='submit-button p-2 m-1 rounded-2'  onClick={billData ? () => { handleDownloadPdf(); handlePrint(); } : handleClickOpen}>{billData ? "Print" : "Generate Invoice"}</button>
       </div>
 
       <Dialog
@@ -308,8 +378,26 @@ const CreateBill = (customer) => {
           </button>
         </DialogActions>
       </Dialog>
+
+<style>
+  {
+    `
+    .react-datepicker-ignore-onclickoutside{
+    width:120px;
+    }
+    
+    .react-datepicker__input-container input{
+      border:none;
+      width:120px;
+    }
+    `
+  }
+
+    
+</style>  
     </div>
-  );
+
+);
 };
 
 export default CreateBill;

@@ -5,7 +5,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 // import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { apiURL } from "../env";
 import axios from "axios";
 import '../resources/modal.css'
 
@@ -15,8 +14,14 @@ import {
   StateSelect,
 } from "react-country-state-city";
 import Loader from "./loader";
+import { userData } from "../store/slice/userSlice";
+import { useSelector } from "react-redux";
 
 const EditModal = ({ open, handleClose, customer }) => {
+  const apiURL = process.env.REACT_APP_API_URL
+  const userData = useSelector(state => state.user.userData)
+
+  const token = localStorage.getItem('token')
   const [name, setName] = useState("");
   const [gst, setGst] = useState("");
   const [phone, setPhone] = useState("");
@@ -74,15 +79,33 @@ const EditModal = ({ open, handleClose, customer }) => {
     try {
 
       if(customer){
-        
-        let response = await axios.post(`${apiURL}/api/customer/update`, data);
+        console.log("userData.id")
+        console.log(customer)
+
+        let response = await axios.post(`${apiURL}/api/customer/update`, data,
+          {
+            headers : {
+            Authorization : `Bearer ${token}`
+          },
+          params :{
+            id : customer.id
+          }
+        }
+        );
         if (response.status === 200) {
           alert("Customer Updated Successfully");
         }
         setShowLoading(false)
         closeModal()
       }else{
-        let response = await axios.post(`${apiURL}/api/customer/addnew`, data);
+        let response = await axios.post(`${apiURL}/api/customer/addnew`, data ,{
+          headers : {
+            Authorization : `Bearer ${token}`
+          },
+          params :{
+            id : userData.id
+          }
+        });
         if (response.status === 200) {
           alert("Customer Added Successfully");
         }

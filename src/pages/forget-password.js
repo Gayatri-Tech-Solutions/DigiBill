@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import image from '../Assets/forgetPassword.jpg';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { apiURL } from '../env.js';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
 const ForgetPassword = () => {
+    const apiURL = process.env.REACT_APP_API_URL
+    const userData = useSelector(state => state.user.userData)
+    const token = localStorage.getItem('token')
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState("");
     const navigate = useNavigate();
@@ -17,6 +19,13 @@ const ForgetPassword = () => {
             let {data} = await axios.post(`${apiURL}/api/user/forgetPassword`, {
                 email,
                 type: 'forget'
+            },{
+                headers : {
+                    Authorization : `Bearer ${token}`
+                  },
+                  params:{
+                    id : userData.id
+                  }
             });
             if (data.status === true) {
                 setStatus("success");
@@ -30,6 +39,11 @@ const ForgetPassword = () => {
         } catch (error) {
             console.log(error.response.data.data);
             setStatus("error");
+            if(error.response.data.message == 'Token expired'){
+                localStorage.removeItem('token')
+          alert("Token Expired! Please login Again")
+          window.location.reload();
+              }
         }
     };
 

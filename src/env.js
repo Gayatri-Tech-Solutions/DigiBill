@@ -1,1 +1,0 @@
-export const apiURL = "https://billing-server-b4bj.onrender.com"

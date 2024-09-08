@@ -1,21 +1,23 @@
 // Customers.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { apiURL } from '../env';
 import { useNavigate } from 'react-router-dom';
 import { Pagination } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EditIcon from '@mui/icons-material/Edit';
 import EditModal from '../components/EditModal';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import BillModal from '../components/billModal';
 import Loader from '../components/loader';
 import { CiFilter } from "react-icons/ci";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import Stack from '@mui/material/Stack';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useSelector } from 'react-redux';
 
 const Customers = () => {
+  let userData = useSelector(state => state.user.userData)
+  const apiURL = process.env.REACT_APP_API_URL
+  const token = localStorage.getItem('token')
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(1);
   const [customersList, setCustomersList] = useState([]);
@@ -75,7 +77,11 @@ const Customers = () => {
 
       let { data } = await axios.get(`${apiURL}/api/customer/get-all-customers`, {
         params: {
-          page: page || currentPage
+          page: page || currentPage,
+          id : userData.id
+        },
+        headers : {
+          Authorization : `Bearer ${token}`
         }
       });
       setPageCount(data.pageCount)
@@ -84,6 +90,11 @@ const Customers = () => {
     } catch (error) {
       console.log("Error occured while geting customer data", error)
       setShowLoading(false)
+      if(error.response.data.message == 'Token expired'){
+        localStorage.removeItem('token')
+          alert("Token Expired! Please login Again")
+          window.location.reload();
+      }
     }
   };
 
@@ -107,7 +118,11 @@ const Customers = () => {
         let {data} = await axios.get(`${apiURL}/api/customer/filters`,{
           params:{
             ...filters,
-            page: page || currentPage
+            page: page || currentPage,
+            id : userData.id
+          },
+          headers : {
+            Authorization : `Bearer ${token}`
           }
         })
         setCustomersList(data.data)
@@ -118,6 +133,11 @@ const Customers = () => {
         console.log("error occcured while fetching filtered result")
         console.log(error)
         setShowFiltersLoading(false)
+        if(error.response.data.message == 'Token expired'){
+          localStorage.removeItem('token')
+          alert("Token Expired! Please login Again")
+          window.location.reload();
+        }
       }
     } else {
       alert('please select atleast one filter to filter result')

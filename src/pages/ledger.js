@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { apiURL } from '../env';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../resources/dashboard.css'
@@ -7,13 +6,11 @@ import image from '../Assets/construction.jpeg'
 import { Pagination } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EditIcon from '@mui/icons-material/Edit';
-import EditModal from '../components/EditModal';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import BillModal from '../components/billModal';
 
 
 const Ledger = () => {
-
+  const apiURL = process.env.REACT_APP_API_URL
   const [customersList, setCustomersList] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const navigate = useNavigate();
@@ -47,9 +44,9 @@ const Ledger = () => {
     setCustomersList(Array(...data.response));
   };
 
-  useEffect(()=>{
-    getAllCustomers()
-  },[])
+  // useEffect(()=>{
+  //   getAllCustomers()
+  // },[])
   
   return (
 //     <div className="w-100 p-4 mx-3 mb-3 rounded" style={{ height: '88vh' }}>

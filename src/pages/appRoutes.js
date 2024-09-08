@@ -4,9 +4,10 @@ import Sidebar from '../components/sidebar';
 import Header from "../components/header";
 import Dashboard from "./dashboard";
 import Customers from "./customers";
-import Bills from "./bills";
+import Bills from "./all-bills";
 import CreateBill from "./createBill";
 import Ledger from "./ledger";
+import OrganizationDetails from "./organization-details";
 
 const AppRoutes = () => {
   return (
@@ -30,6 +31,7 @@ const AppRoutes = () => {
               <Route path="/create-bill" element={< CreateBill/>}/>
               <Route path="/bills" element={< Bills/>}/>
               <Route path="/ledger" element={< Ledger/>}/>
+              <Route path="/organization-details" element={< OrganizationDetails/>}/>
               <Route path="*" element={<Navigate to={`/dashboard`} />} />
               {/* <Route path="/reopen" element={<ReopenTicket />} /> */}
               {/* <Route path="/correspondence" element={<Correspondence />} /> */}

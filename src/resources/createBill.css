@@ -7,9 +7,16 @@
  padding: 10px 20px;
 }
 
-.bill-heading,.detail-block,.receiver-detail-block,.bill-item-block , .total-block{
+.bill-heading,.detail-block,.receiver-detail-block {
   padding-bottom: 5px;
   border-bottom: 3px solid black;
+}
+
+.stampAndCondition , .total-block{
+  padding-bottom: 5px;
+  padding-top: 5px;
+  border-top: 3px solid black;
+
 }
 
 .vl {
@@ -19,10 +26,7 @@
 }
 
 
-.bill-item-block{
- padding: 5px;
-  border-bottom: 3px solid black;
-}
+
 
 .invoice-summary h3 {
   display: grid;
@@ -38,4 +42,15 @@
 .sas-input{
   width: 112px;
   border: 0;
+}
+ 
+@media print {
+  .stampAndCondition {
+    page-break-inside: avoid;
+  }
+}
+@media print {
+  .total-block {
+    page-break-inside: avoid;
+  }
 }

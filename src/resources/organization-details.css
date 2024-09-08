@@ -1,0 +1,10 @@
+.nav-link{
+  padding-left: 30px !important;
+  padding-right: 30px !important;
+  color: rgb(127,74,196) !important;
+  font-weight: bold !important;
+}
+.nav-link.active{
+  border-bottom: 3px solid rgb(127,74,196)!important;
+
+}

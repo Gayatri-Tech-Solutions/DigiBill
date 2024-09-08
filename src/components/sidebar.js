@@ -6,22 +6,26 @@ import { useDispatch } from "react-redux";
 // import { logout } from "../store/slice/ticketSlice";
 import "../resources/sidebar.css";
 
+import { MdDashboard } from "react-icons/md";
+import { MdOutlineDocumentScanner } from "react-icons/md";
+import { IoPeopleSharp } from "react-icons/io5";
+import { IoCashOutline } from "react-icons/io5";
+import { GrOrganization } from "react-icons/gr";
+
 const Sidebar = () => {
   const [activePage, setActivePage] = useState("/dashboard");
   const [sideBar , setSideBar] = useState(true)
   const navigate = useNavigate();
   // const dispatch = useDispatch();
   const location = useLocation();
-  let path = location.pathname;
+  
+  useEffect(()=>{
+    let path = location.pathname;
+    console.log("path")
+    console.log(path)
+    setActivePage(location.pathname);
 
-  useEffect(() => {
-    if (path.startsWith("/dashboard")) {
-      setActivePage("/dashboard");
-    } else if (path.startsWith("/tickets")) {
-      setActivePage("/tickets");
-    }
-  }, [location.pathname]);
-
+  },[location])
   const showPage = (value) => {
     setActivePage(value);
     navigate(value);
@@ -31,29 +35,36 @@ const Sidebar = () => {
     <>
         <div className="w-100 p-3">
           <div
-            className={`sidebar-item ${activePage === "/dashboard" ? "active" : ""}`}
+            className={`sidebar-item ${activePage === "/dashboard" ? "active" : ""} d-flex`}
             onClick={() => showPage("/dashboard")}
           >
-            <strong>Dashboard</strong>
+            <h4 className=" me-2"><MdDashboard /> </h4><strong><sub className=" fs-6">Dashboard</sub></strong>
           </div>
           <div
-            className={`sidebar-item ${activePage === "/bills" || activePage === "/create-bill" ? "active" : ""}`}
+            className={`sidebar-item ${activePage === "/bills" || activePage === "/create-bill" ? "active" : ""} d-flex`}
             onClick={() => showPage("/bills")}
           >
-            <strong>Bills</strong>
+           <h4 className=" me-2"><MdOutlineDocumentScanner /> </h4><strong><sub className=" fs-6">Bills</sub></strong>
           </div>
           <div
-            className={`sidebar-item ${activePage === "/customers" ? "active" : ""}`}
+            className={`sidebar-item ${activePage === "/customers" ? "active" : ""} d-flex `}
             onClick={() => showPage("/customers")}
-          >
-            <strong>Customers</strong>
+          > 
+            <h4 className=" me-2"><IoPeopleSharp /> </h4><strong ><sub className=" fs-6">Customers</sub></strong>
           </div>
 
           <div
-            className={`sidebar-item ${activePage === "/ledger" ? "active" : ""}`}
+            className={`sidebar-item ${activePage === "/ledger" ? "active" : ""} d-flex`}
             onClick={() => showPage("/ledger")}
           >
-            <strong>Ledger</strong>
+            <h4 className=" me-2"><IoCashOutline /> </h4><strong><sub className=" fs-6">Ledger</sub></strong>
+          </div>
+
+          <div
+            className={`sidebar-item ${activePage === "/organization-details" ? "active" : ""} d-flex `}
+            onClick={() => showPage("/organization-details")}
+          >
+            <h4 className=" me-2"><GrOrganization /></h4><strong><sub className=" fs-6"> Organization</sub></strong>
           </div>
         </div>
     </>

@@ -1,13 +1,10 @@
-import Createbill from '../components/createbill'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { apiURL } from '../env';
 import { Pagination } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { CiFilter } from "react-icons/ci";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import EditModal from '../components/EditModal';
-import BillModal from '../components/billModal';
 import moment from "moment";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -21,9 +18,13 @@ import '../resources/bills.css'
 import Stack from '@mui/material/Stack';
 import CircularProgress from '@mui/material/CircularProgress';
 import Loader from '../components/loader';
+import { useSelector } from 'react-redux';
 
 const Bills = () => {
+  const apiURL = process.env.REACT_APP_API_URL
   const navigate = useNavigate();
+  const userData = useSelector(state => state.user.userData)
+  const token = localStorage.getItem('token')
   const [showDialog, setShowDialog] = useState(false);
   const [bills, setBills] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -74,7 +75,11 @@ const Bills = () => {
       let { data } = await axios.get(`${apiURL}/api/invoice/getInvoices`,
         {
           params: {
-            page: page || currentPage
+            page: page || currentPage,
+            userid : userData.id
+          },
+          headers : {
+            Authorization : `Bearer ${token}`
           }
         }
       );
@@ -83,6 +88,12 @@ const Bills = () => {
       setShowLoading(false)
     }catch(error){
       console.log("error occured while fetching bills",error)
+      console.log("error.response")
+      if(error.response.data.message == 'Token expired'){
+        localStorage.removeItem('token')
+        alert("Token Expired! Please login Again")
+        window.location.reload();
+      }
       setShowLoading(false)
     }
   };
@@ -108,7 +119,14 @@ const Bills = () => {
     }
     try {
       if (updatedStatus.length > 1 && updatedStatus !== currentBill.status) {
-        let { data } = await axios.post(`${apiURL}/api/invoice/update`, apiData)
+        let { data } = await axios.post(`${apiURL}/api/invoice/update`, apiData ,{
+          headers : {
+            Authorization : `Bearer ${token}`
+          },
+          params:{
+            userid : userData.id
+          }
+        } )
         setShowLoading(false)
         getBills()
       }
@@ -116,6 +134,11 @@ const Bills = () => {
       console.log("Error occured while updating status")
       console.log(error)
       setShowLoading(false)
+      if(error.response.data.message == 'Token expired'){
+        localStorage.removeItem('token')
+          alert("Token Expired! Please login Again")
+          window.location.reload();
+      }
     }
     setOpen(false);
   };
@@ -135,7 +158,11 @@ const Bills = () => {
         let { data } = await axios.get(`${apiURL}/api/invoice/filters`, {
           params: {
             ...filters,
-            page: page || currentPage
+            page: page || currentPage,
+            userid : userData.id
+          },
+          headers : {
+            Authorization : `Bearer ${token}`
           }
         })
         console.log(data.data)
@@ -146,6 +173,11 @@ const Bills = () => {
         console.log("error occcured while fetching filtered result")
         console.log(error)
         setShowFiltersLoading(false)
+        if(error.response.data.message == 'Token expired'){
+          localStorage.removeItem('token')
+          alert("Token Expired! Please login Again")
+          window.location.reload();
+        }
       }
     } else {
       alert('please select atleast one filter to filter result')
@@ -307,6 +339,12 @@ const Bills = () => {
                           })}
                         </tbody>
                       </table>
+                      {
+            bills.length<=0 ?
+            <div className='d-flex  justify-content-center fw-light'>No Data Found</div>
+            :
+            <></>
+            }
                     </div>
             
                     {/* code for pagination */}

@@ -11,10 +11,10 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
-import { apiURL } from "../env";
 import logo from '../Assets/logo.png'
 
 const Header = ({ sideBar, setSideBar }) => {
+  const apiURL = process.env.REACT_APP_API_URL
   const adminData = localStorage.getItem("token");
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [userName, setUserName] = useState("");
@@ -82,7 +82,11 @@ const Header = ({ sideBar, setSideBar }) => {
       try {
         let { data } = await axios.post(
           `${apiURL}/api/user/reset-password`,
-          apiData,
+          apiData,{
+            headers : {
+              Authorization : `Bearer ${token}`
+            }
+          }
         );
         setPassword("");
         setNewPassword("");
@@ -127,7 +131,10 @@ const Header = ({ sideBar, setSideBar }) => {
   useEffect(() => {
     setUserName(userDetails?.name);
     setEmail(userDetails?.email);
-  }, [adminData]);
+  }, [adminData , userDetails]);
+
+  console.log("userDetails.otherData")
+  console.log(userDetails.otherData)
 
   return (
     <>
@@ -167,7 +174,7 @@ const Header = ({ sideBar, setSideBar }) => {
             </div>
             <div className="user-details">
               <div className="user-name">{userName}</div>
-              <div className="user-role">Jay Logistic Services</div>
+              <div className="user-role text-capitalize">{userDetails?.otherData?.firmDetails?.firmName.toLowerCase()}</div>
             </div>
             <div className="dropdown">
               <div onClick={() => toggleDropdown()}>

@@ -1,40 +1,54 @@
-import {BrowserRouter as Router , Route , Routes, useSearchParams , Navigate} from "react-router-dom"
-import { useState } from "react";
+// Import necessary modules and hooks
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import './App.css';
 import AppRoutes from "./pages/appRoutes";
-import LoginPage from "./pages/loginpage";
+import LoginPage from "./pages/login-page";
 import Register from "./pages/registerUser";
-import ForgetPassword from "./pages/forgetpassword";
+import ForgetPassword from "./pages/forget-password";
 import { useSelector } from "react-redux";
+import {validateOtherData} from './resources/otherdata-validation';
+import OrganizationDetails from "./pages/organization-details";
 
 function App() {
-  // const [loggedIn , setLoggedIn] = useState(false)
-  const loggedIn = useSelector(state=>state.user.loggedIn)
+  const loggedIn = useSelector((state) => state.user.loggedIn);
+  const userData = useSelector((state) => state.user.userData);
+  const [dataValidation, setDataValidation] = useState(false);
 
-  const token = localStorage.getItem("token")
-  
+  // UseEffect to validate user data on change
+  useEffect(() => {
+      if (userData && userData.otherData && validateOtherData(userData.otherData)) {
+        setDataValidation(true);
+      } else {
+        setDataValidation(false);
+      }
+  }, [userData]);
 
-  return(
-
+  return (
     <div className="main-routes">
       <Router>
-        {loggedIn ?
-        <AppRoutes/> 
-        :
-        <Routes>
-          <Route  path="/login" element={<LoginPage/>} />
-          <Route  path="*" element={<Navigate to='/login' />} />
-          <Route path="/register" element={<Register/>} />
-          <Route path="/forgetPassword" element={<ForgetPassword/>} />
-        </Routes>
-      }
+        {loggedIn ? (
+          dataValidation ? (
+            <Routes>
+            <Route path="*" element={<AppRoutes />} />
+          </Routes>
+          ) : (
+            <Routes>
+              <Route path="/organization-details" element={<OrganizationDetails />} />
+              <Route path="*" element={<OrganizationDetails/>} />
+            </Routes>
+          )
+        ) : (
+         <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgetPassword" element={<ForgetPassword />} />
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+        )}
       </Router>
-      
-      
-      </div>
-    )
-  }
-  
-  export default App;
-  
-  {/* <Route path="/" element={</>} /> */}
+    </div>
+  );
+}
+
+export default App;
