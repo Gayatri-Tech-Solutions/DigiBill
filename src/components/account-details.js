@@ -11,7 +11,7 @@ const Accountdetails = ({data}) => {
  
   const apiURL = process.env.REACT_APP_API_URL
 //  console.log(data)
- const  userDetails= useSelector(state=> state.user.userData)
+ const  userDetails= useSelector(state=> state?.user?.userData)
  const token = localStorage.getItem('token')
   const dispatch = useDispatch();
 
@@ -20,8 +20,8 @@ const Accountdetails = ({data}) => {
   const [branchState, setBranch] = useState(data?.branch || '');
   const [accountNameState, setAccountName] = useState(data?.accountName || '');
   const [accountNumberState, setAccountNumber] = useState(data?.accountNumber || '');
-  const [ifscCodeState, setIFSCcode] = useState(data.IFSCcode || '');
-  const [pincodeState, setPincode] = useState(data.pincode || '');
+  const [ifscCodeState, setIFSCcode] = useState(data?.IFSCcode || '');
+  const [pincodeState, setPincode] = useState(data?.pincode || '');
   const [editDetails , setEditDetails] = useState(false)
   const [editDetailsLoading, setEditDetailsLoading] = useState(false)
   
