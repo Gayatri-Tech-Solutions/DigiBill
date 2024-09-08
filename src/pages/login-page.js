@@ -75,7 +75,7 @@ const LoginPage = ({ setLoggedin }) => {
       setShowLoading(false)
       setShowAlert(false);
     } catch (error) {
-
+      setShowLoading(false)
       setShowAlert(true);
       console.log(error)
       console.log(error.response.data.error)
@@ -83,7 +83,6 @@ const LoginPage = ({ setLoggedin }) => {
         setShowIdAlert('true')
       }
       
-      setShowLoading(false)
     }
   };
 

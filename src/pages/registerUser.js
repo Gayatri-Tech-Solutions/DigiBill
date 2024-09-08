@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import image from "../Assets/register.jpg";
 import { Verified } from "@mui/icons-material";
+import Loader from "../components/loader";
 
 const Register = () => {
   // const navigate = useNavigate()
@@ -15,10 +16,12 @@ const Register = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [name , setName] = useState("");
   const [phone , setPhone] = useState("")
+  const [showLoading, setShowLoading] = useState(false)
   const navigate = useNavigate();
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setShowLoading(true)
     try {
       let bodyData = {
         email,
@@ -30,8 +33,10 @@ const Register = () => {
 
       let { data } = await axios.post(`${apiURL}/api/user/register`, bodyData);
       setShowAlert(false)
+      setShowLoading(false)
       navigate('/login')
     } catch (error) {
+      setShowLoading(false)
       console.log(error)
       setShowAlert(true);
       setShowAlert(true);
@@ -39,6 +44,7 @@ const Register = () => {
   };
 
   return (
+    showLoading ? <Loader/> :
     <>
       <div
         className="d-flex justify-content-center w-100 p-4"

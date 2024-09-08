@@ -8,9 +8,9 @@ import Accountdetails from '../components/account-details';
 
 const OrganizationDetails = () => {
 
- const userData = useSelector(state => state.user.userData)
- const firmDetails = {firmDetails : userData.otherData.firmDetails , address : userData.address}
- const bankDetails = userData.otherData.bankDetails
+ const userData = useSelector(state => state?.user?.userData)
+ const firmDetails = {firmDetails : userData?.otherData?.firmDetails , address : userData?.otherData?.address}
+ const bankDetails = userData?.otherData?.bankDetails
 
  const [key, setKey] = useState("UserDetails");
 
